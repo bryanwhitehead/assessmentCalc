@@ -1,0 +1,265 @@
+  <!DOCTYPE html>
+<!--
+     P&G assessment test helper application
+     Author: Bryan Whitehead
+     Created: February 2021
+     Version: 1
+     Notes: Javascript version was ported from a similar python version which used tkinter library for UI.
+ -->
+<html>
+    <head>
+        <title>JavaScript P&G helper App - Bryan Whitehead</title>
+        <meta charset="windows-1252">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="calc_style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <table width="100%"><tr>
+                    <td><div class="top_content">
+                    <h4>The Assessment Calculator</h4>
+                    </div></td>
+                </td><td>
+                    <div class="box">
+                    <a href="#popup1">?</a>
+                    </div>
+                </td></tr>
+                </table>
+                
+            </div>
+            <div class="row1">
+                <div class="operators" id="demo"></div>
+                <!-- operator buttons add signs to string of operators  -->
+                <button class="block" id="add" value="+" onclick="add_opp();">+</button>
+                <button class="block" id="sub" value="-" onclick="add_sub();">-</button>
+                <button class="block" id="mul" value="*" onclick="add_mul();">x</button>
+                <button class="block" id="div" value="/" onclick="add_div();">/</button>
+                <button class="blockc" id="ccc" value="C" onclick="add_ccc();">C</button>
+                <input type="text" id="ans" name="ans" onclick="this.value = '' "/>
+            </div>
+            <div class="row1">
+                <div class="result_area" id="results"></div>
+                <button class="blocks" id="get_result" value="1" onclick="get_answer();">Solve</button>
+            </div>
+        </div>
+        
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <h2>Instructions:</h2>
+                <a class="close" href="#">&times;</a>
+                <div class="content">
+                    <p>Click the operator buttons in the order as found.  In the box to the right of the buttons enter the numeric answer that is given in the problem.  
+                        Click Solve once the operators are correct and answer is entered.  A possible answer will appear in the lower left text bar.  
+                        If you get "no answer" you either (in reverse order of likelihood) found a bug, entered something wrong, or there is no answer using whole numbers.</p>
+                </div>
+            </div>
+        </div>
+        <script>
+            var operator = "";
+            var answer = 0;
+            var solved = "";
+
+            function add_opp()              // operator add
+            {
+                operator = operator + document.getElementById("add").value;
+                if(operator.length > 3){
+                    document.getElementById("results").innerHTML = "<span style='color:red'>3 operator maximum</span>";
+                    operator = operator.slice(0,3);
+                }else{
+                    document.getElementById("demo").innerHTML = operator;
+                }
+                
+            }
+            function add_sub()              // operator subtract
+            {
+                operator = operator + document.getElementById("sub").value;
+                if(operator.length > 3){
+                    document.getElementById("results").innerHTML = "<span style='color:red'>3 operator maximum</span>";
+                    operator = operator.slice(0,3);
+                }else{
+                    document.getElementById("demo").innerHTML = operator;
+                }
+            }
+            function add_mul()              // operator multiply
+            {
+                operator = operator + document.getElementById("mul").value;
+                if(operator.length > 3){
+                    document.getElementById("results").innerHTML = "<span style='color:red'>3 operator maximum</span>";
+                    operator = operator.slice(0,3);
+                }else{
+                    document.getElementById("demo").innerHTML = operator;
+                }
+            }
+            function add_div()              // operator for divide.   This is not actually used in the assessment
+            {
+                operator = operator + document.getElementById("div").value;
+                if(operator.length > 3){
+                    document.getElementById("results").innerHTML = "<span style='color:red'>3 operator maximum</span>";
+                    operator = operator.slice(0,3);
+                }else{
+                    document.getElementById("demo").innerHTML = operator;
+                }
+            }
+            function add_ccc()              // clear the memory and screen
+            {
+                operator = "";
+                document.getElementById("demo").innerHTML = operator;
+                answer = 0;
+                document.getElementById("ans").value = answer;
+                document.getElementById("results").innerHTML = "";
+            }
+            
+            // this function uses nested loops to find solutions.  There are 3 possible amounts of operators (operator.length: 1-3)
+            // the possible answers are calculated based on the operators and when a solution is available the answer will output to the resultsID div.
+            
+            function get_answer()
+            {
+                answer = document.getElementById("ans").value;
+                var tempsolved = "";
+                var i = 1;
+                var j = 1;
+                var k = 1;
+                var l = 1;
+                var sum = 0;
+                var continueLoop = 1;
+                if (operator.length == 1)
+                {
+                    while (i < 10){
+                        while (j < 10){
+                            sum = eval(i + operator[0] +j);
+                            console.log(sum)
+                            // if whole number answer and a good answer is found and no duplicate numbers.
+                            if ((sum % 1) == 0 && sum == answer && i != j)
+                            {
+                                continueLoop = 0;       
+                                break;
+                            }
+                            j++;
+                        }
+                        if (continueLoop == 0){
+                            break;
+                        }
+                        j = 1;
+                        i++;
+                    }
+                    if (i == 10)
+                    {
+                        tempsolved = "No Answer";
+                        answer = 0;
+                        solved = "";
+                    }
+                    else
+                    {
+                        tempsolved = tempsolved + i.toString() + " " + operator[0]  + " " +  j.toString()  + " = " + sum.toString();
+                        solved = tempsolved;
+                    }
+                    console.log(tempsolved);
+                    document.getElementById("results").innerHTML = tempsolved;
+                }
+                
+                if (operator.length == 2)
+                {
+                    console.log(" in " + operator.length);
+                    while (i < 10)
+                    {
+                        while (j < 10)
+                        {
+                            while (k < 10)
+                            {
+                                sum = eval(i + operator[0] + j + operator[1] + k);
+                                console.log(sum);
+                                // if whole number answer and a good answer is found and no duplicate numbers.
+                                if ((sum % 1) == 0 && sum == answer && i != j && i != k && j != k)
+                                { 
+                                    continueLoop = 0;
+                                    break;
+                                }
+                                k++;
+                            }
+                            if (continueLoop == 0)
+                            {
+                                break;
+                            }
+                            k = 1;
+                            j++;
+                        }
+                        if (continueLoop == 0)
+                        {
+                            break;
+                        }
+                        j = 1;
+                        i++;
+                    }
+                    if (i == 10)
+                    {
+                        tempsolved = "No Answer";
+                        answer = 0;
+                        solved = "";
+                    }
+                    else{
+                        tempsolved = i.toString() + " "+ operator[0]+ " "+ j.toString() + " "+ operator[1]+ " "+ k.toString() + " = "+ sum.toString()
+                        solved = tempsolved;
+                        
+                    }
+                    console.log(tempsolved);
+                    document.getElementById("results").innerHTML = tempsolved;
+                }
+                
+                if (operator.length == 3)           // 3 operators
+                {
+                    while (i < 10)
+                    {
+                        while (j < 10)
+                        {
+                            while (k < 10)
+                            {
+                                while (l < 10)
+                                {
+                                    sum = eval(i + operator[0] + j + operator[1] + k + operator[2] + l);
+                                    // if whole number answer and a good answer is found and no duplicate numbers.
+                                    if ((sum % 1) == 0 && sum == answer && i != j && i != k && i != l && j != k && j != l && k != l)
+                                    {
+                                        continueLoop = 0;
+                                        break;
+                                    }
+                                    l++;
+                                }
+                                if (continueLoop == 0){
+                                    break;
+                                }
+                                l = 1;
+                                k++;
+                            }
+                            if (continueLoop == 0)
+                            {
+                                break;
+                            }
+                            k = 1;
+                            j++;
+                        }
+                        if (continueLoop == 0)
+                        {
+                            break;
+                        }
+                        j = 1;
+                        i++;
+                    }
+                    if (i == 10)
+                    {
+                        tempsolved = "No Answer";
+                        answer = 0;
+                        solved = "";
+                    }    
+                    else
+                    {
+                        tempsolved = i.toString() + " "+ operator[0]+ " "+ j.toString() + " "+ operator[1]+ " "+ k.toString() + " "+ operator[2]+ " "+ l.toString() + " = "+ sum.toString()
+                    }
+                    solved = tempsolved;
+                    console.log(tempsolved);
+                    document.getElementById("results").innerHTML = tempsolved;
+                }
+            }
+        </script>
+    </body>
+</html>
